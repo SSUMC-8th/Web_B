@@ -34,6 +34,7 @@ SSUMC 8기 Web 스터디 B조
 | mission  | 미션 수행           |
 | practice | 실습 수행           |
 | workbook | 워크북 정리         |
+| refactor | 코드 리팩토링        |
 |   fix    | 버그 수정           |
 |   docs   | 문서 수정           |
 | comment  | 주석 추가 및 변경   |
