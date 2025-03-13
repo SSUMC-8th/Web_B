@@ -60,7 +60,7 @@ SSUMC 8기 Web 스터디 B조
 |  remove  | 파일 혹은 폴더 삭제 |
 |  chore   | 기타 변경사항       |
 
-```bash
+```bash 
 // 커밋 메시지
 [week1/mission] 미션 제목
 ```
