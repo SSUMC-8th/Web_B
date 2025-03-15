@@ -5,7 +5,7 @@ body:
   - type: textarea
     id: workbook-description
     attributes:
-      label: ✨ n주차 스터디
+      label: ✨ 스터디 내용
       placeholder: |
         n주차 워크북 | ```Hello TypeScript```
     validations:
