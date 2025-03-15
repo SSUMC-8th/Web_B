@@ -1,7 +1,6 @@
 name: 📚 Workbook
 description: 워크북 주차 업로드
-title: '[📚 Workbook] '
-labels: ['📚 Workbook']
+title: '[📚 Chapter 0] '
 body:
   - type: textarea
     id: workbook-description
@@ -15,5 +14,3 @@ body:
     id: docs-checklist
     attributes:
       label: 📍 참고 사항
-      description: |
-        참고 사항 작성
