@@ -3,7 +3,6 @@ addReviewers: true
 addAssignees: author
 
 reviewers:
-  - m4ushold
   - qowldud
   - oortmealy
   - namgungseok12
