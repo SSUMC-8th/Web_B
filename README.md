@@ -1,5 +1,3 @@
-### 테스트
-
 # 🌐 Web B
 
 SSUMC 8기 Web 스터디 B조
