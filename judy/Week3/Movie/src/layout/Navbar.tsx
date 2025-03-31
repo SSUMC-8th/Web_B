@@ -36,19 +36,19 @@ export const Navbar = () => {
         상영 중
       </div>
       <div
-        onClick={() => navigate("/movies/top-rated")}
+        onClick={() => navigate("/movies/top_rated")}
         className={clsx(
           "cursor-pointer",
-          pathname === "/movies/top-rated" ? "text-lime-600" : "text-black"
+          pathname === "/movies/top_rated" ? "text-lime-600" : "text-black"
         )}
       >
         평점 높은
       </div>
       <div
-        onClick={() => navigate("/movies/now-playing")}
+        onClick={() => navigate("/movies/now_playing")}
         className={clsx(
           "cursor-pointer",
-          pathname === "/movies/now-playing" ? "text-lime-600" : "text-black"
+          pathname === "/movies/now_playing" ? "text-lime-600" : "text-black"
         )}
       >
         개봉 예정

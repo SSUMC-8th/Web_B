@@ -1,10 +1,7 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { RootLayout } from "./layout/root-layout";
 import { HomePage } from "./page/HomePage";
-import { PopularPage } from "./page/PopularPage";
-import { UpComingPage } from "./page/UpComingPage";
-import { NowPlaying } from "./page/NowPlaying";
-import { TopRatedPage } from "./page/TopRatedPage";
+import { MovieListPage } from "./page/MovieListPage";
 
 const router = createBrowserRouter([
   {
@@ -17,19 +14,19 @@ const router = createBrowserRouter([
       },
       {
         path: "movies/popular",
-        element: <PopularPage />,
+        element: <MovieListPage />,
       },
       {
         path: "movies/upcoming",
-        element: <UpComingPage />,
+        element: <MovieListPage />,
       },
       {
-        path: "movies/top-rated",
-        element: <TopRatedPage />,
+        path: "movies/top_rated",
+        element: <MovieListPage />,
       },
       {
-        path: "movies/now-playing",
-        element: <NowPlaying />,
+        path: "movies/now_playing",
+        element: <MovieListPage />,
       },
     ],
   },
