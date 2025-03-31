@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { MovieCard } from "../components/common/MovieCard";
 import { Movie, MovieResponse } from "../types/movie";
 import { apiClient } from "../api/apiClient";
+import { Pagination } from "../components/common/Pagination";
 
 export const NowPlaying = () => {
   const [page, setPage] = useState<number>(1);
@@ -23,6 +24,7 @@ export const NowPlaying = () => {
   }, [page]);
   return (
     <div>
+      <Pagination page={page} setPage={setPage} />
       <main className="flex justify-center flex-wrap gap-20">
         {movies?.map((movie) => (
           <MovieCard movie={movie} key={movie.id} />
