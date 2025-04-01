@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import { Movie } from "../../types/movie";
 
 interface Props {
@@ -5,11 +6,17 @@ interface Props {
 }
 
 export const MovieCard = ({ movie }: Props) => {
+  const navigate = useNavigate();
+  const onClickMovie = (movieId: number) => {
+    navigate(`/movie/detail/${movieId}`);
+  };
+
   return (
     <div
       className={
-        "w-60 h-90 rounded-md hover:scale-110 transition-all duration-300 ease-in overflow-hidden relative group"
+        "w-60 h-90 rounded-md hover:scale-110 transition-all duration-300 ease-in overflow-hidden relative group cursor-pointer"
       }
+      onClick={() => onClickMovie(movie.id)}
     >
       <img
         src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}

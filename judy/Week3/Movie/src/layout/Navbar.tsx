@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 export const Navbar = () => {
   const navigate = useNavigate();
   const pathname = window.location.pathname;
-  console.log(pathname);
 
   return (
     <nav className="flex h-15 items-center px-5 gap-4">

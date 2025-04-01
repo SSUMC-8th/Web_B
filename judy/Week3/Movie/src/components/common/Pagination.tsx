@@ -24,7 +24,7 @@ export const Pagination = ({ page, setPage }: Props) => {
           "w-15 h-15 rounded-md text-white cursor-pointer",
           page === 1
             ? "bg-gray-400 hover:bg-gray-400"
-            : "bg-purple-300 hover:bg-lime-300"
+            : "bg-lime-500 hover:bg-lime-400"
         )}
         onClick={onPrevPage}
       >
@@ -32,7 +32,7 @@ export const Pagination = ({ page, setPage }: Props) => {
       </button>
       <div>{page} 페이지</div>
       <button
-        className="w-15 h-15 rounded-md bg-purple-300 hover:bg-lime-300 text-white cursor-pointer"
+        className="w-15 h-15 rounded-md bg-lime-500 hover:bg-lime-400 text-white cursor-pointer"
         onClick={onNextPage}
       >
         {">"}
