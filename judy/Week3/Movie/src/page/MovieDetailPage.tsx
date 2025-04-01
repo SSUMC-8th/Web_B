@@ -1,14 +1,15 @@
 import { useEffect, useState } from "react";
 import { apiClient } from "../api/apiClient";
-import { IFmovieInfo } from "../types/movieDetail";
+import { IFCredits, IFmovieInfo } from "../types/movieDetail";
 
 export const MovieDetailPage = () => {
   const [movie, setMovie] = useState<IFmovieInfo | null>(null);
+  const [credit, setCredit] = useState<IFCredits | null>(null);
   const movieId = window.location.pathname.split("/")[3];
+
   useEffect(() => {
     const getMovieInfo = async () => {
       const { data } = await apiClient.get(`/${movieId}?language=ko-KR`);
-      console.log(data);
 
       const newMovie = {
         id: data.id,
@@ -26,23 +27,78 @@ export const MovieDetailPage = () => {
       setMovie(newMovie);
     };
 
+    const getCredit = async () => {
+      const { data } = await apiClient.get(
+        `/${movieId}/credits?language=ko-KR`
+      );
+      setCredit(data);
+    };
+
     getMovieInfo();
+    getCredit();
   }, [movieId]);
 
   return (
-    <div className="w-[100vw] h-[100vh] px-10 py-10 flex items-center gap-50 ">
-      <img
-        src={`https://image.tmdb.org/t/p/w1280${movie?.poster_path}`}
-        className="h-250"
-      />
-      <div className="flex flex-col w-220 gap-6">
-        <div className="text-8xl font-bold">{movie?.original_title}</div>
-        <div className="text-2xl break-keep font-semibold">
+    <div className="w-[100vw] px-10 py-10 flex  gap-20 bg-black text-white">
+      <div className="w-400">
+        <img
+          src={`https://image.tmdb.org/t/p/w1280${movie?.poster_path}`}
+          className="h-250"
+        />
+      </div>
+
+      <div className="flex flex-col gap-6">
+        {/* 제목 */}
+        <h1 className="text-8xl font-bold">{movie?.original_title}</h1>
+        {/* 내용 */}
+        <div className="text-2xl break-keep font-semibold w-250">
           {movie?.overview}
         </div>
+        {/* 평점 */}
         <div className="text-2xl">
           <span className="font-bold">평점:</span>{" "}
           {movie?.vote_average.toFixed(2)}
+        </div>
+        {/* 출연진 */}
+        <div className="flex flex-col gap-4">
+          <div className="text-2xl font-bold">출연진</div>
+          <div className="flex flex-wrap gap-4">
+            {credit?.cast.map((actor) => (
+              <>
+                {actor.profile_path && (
+                  <div className="flex flex-col">
+                    <img
+                      src={`https://image.tmdb.org/t/p/w1280${actor.profile_path}`}
+                      className="w-30"
+                      key={actor.id}
+                    />
+                    <div>{actor.name}</div>
+                  </div>
+                )}
+              </>
+            ))}
+          </div>
+        </div>
+
+        {/* 제작진 */}
+        <div className="flex flex-col gap-4">
+          <div className="text-2xl font-bold">제작진</div>
+          <div className="flex flex-wrap gap-4">
+            {credit?.crew.map((cr) => (
+              <>
+                {cr.profile_path && (
+                  <div className="flex flex-col">
+                    <img
+                      src={`https://image.tmdb.org/t/p/w1280${cr.profile_path}`}
+                      className="w-30"
+                      key={cr.id}
+                    />
+                    <div>{cr.name}</div>
+                  </div>
+                )}
+              </>
+            ))}
+          </div>
         </div>
         <div className="flex flex-col gap-5 font-bold">
           <div className="text-2xl">제작회사</div>
@@ -52,6 +108,7 @@ export const MovieDetailPage = () => {
                 <img
                   src={`https://image.tmdb.org/t/p/w1280${company.logo_path}`}
                   className="w-50"
+                  key={company.id}
                 />
               </>
             ))}
