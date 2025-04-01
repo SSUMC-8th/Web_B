@@ -4,6 +4,7 @@ import { Movie, MovieResponse } from "../types/movie";
 import { MovieCard } from "../components/common/MovieCard";
 import { Pagination } from "../components/common/Pagination";
 import { ErrorPage } from "../components/common/ErrorPage";
+import { LoadingPage } from "../components/common/LoadingPage";
 
 export const MovieListPage = () => {
   const [page, setPage] = useState<number>(1);
@@ -34,9 +35,7 @@ export const MovieListPage = () => {
   return (
     <>
       {loading ? (
-        <div className="w-[100vw] h-[100vh] flex items-center justify-center">
-          <span className="w-20 h-20 border-6 border-lime-400 border-b-transparent rounded-full animate-spin"></span>
-        </div>
+        <LoadingPage />
       ) : error ? (
         <ErrorPage />
       ) : (
