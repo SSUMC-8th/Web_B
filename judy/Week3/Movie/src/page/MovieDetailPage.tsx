@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { apiClient } from "../api/apiClient";
-import { IFCredits, IFmovieInfo } from "../types/movieDetail";
+import { IFCredits, IFmovieInfo } from "../types/movieDetailType";
 import { ErrorPage } from "../components/common/ErrorPage";
 import { LoadingPage } from "../components/common/LoadingPage";
 
@@ -63,16 +63,14 @@ export const MovieDetailPage = () => {
       ) : (
         <div className="w-[100vw] h-min-[100vh] px-10 py-10 flex  gap-20 bg-black text-white">
           <div className="w-400">
-            <img
-              src={`https://image.tmdb.org/t/p/w1280${movie?.poster_path}`}
-            />
+            <img src={`https://image.tmdb.org/t/p/w500${movie?.poster_path}`} />
           </div>
 
           <div className="flex flex-col gap-6">
             {/* 제목 */}
             <h1 className="text-8xl font-bold">{movie?.original_title}</h1>
             {/* 내용 */}
-            <div className="text-2xl break-keep font-semibold w-250">
+            <div className="text-xl break-keep font-semibold w-250">
               {movie?.overview}
             </div>
             {/* 평점 */}
@@ -89,7 +87,7 @@ export const MovieDetailPage = () => {
                     {actor.profile_path && (
                       <div className="flex flex-col">
                         <img
-                          src={`https://image.tmdb.org/t/p/w1280${actor.profile_path}`}
+                          src={`https://image.tmdb.org/t/p/w500${actor.profile_path}`}
                           className="w-30"
                           key={actor.id}
                         />
@@ -114,7 +112,7 @@ export const MovieDetailPage = () => {
                     {cr.profile_path && (
                       <div className="flex flex-col">
                         <img
-                          src={`https://image.tmdb.org/t/p/w1280${cr.profile_path}`}
+                          src={`https://image.tmdb.org/t/p/w500${cr.profile_path}`}
                           className="w-30"
                           key={cr.id}
                         />
@@ -129,17 +127,19 @@ export const MovieDetailPage = () => {
                 ))}
               </div>
             </div>
+
             <div className="flex flex-col gap-5 font-bold">
               <div className="text-2xl">제작회사</div>
               <div className="flex gap-20">
                 {movie?.production_companies.map((company) => (
-                  <>
+                  <div className="flex flex-col gap-3 items-center justify-center">
                     <img
-                      src={`https://image.tmdb.org/t/p/w1280${company.logo_path}`}
+                      src={`https://image.tmdb.org/t/p/w500${company.logo_path}`}
                       className="w-50"
                       key={company.id}
                     />
-                  </>
+                    <div>{company.name}</div>
+                  </div>
                 ))}
               </div>
             </div>

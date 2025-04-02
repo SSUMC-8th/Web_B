@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { apiClient } from "../api/apiClient";
-import { Movie, MovieResponse } from "../types/movie";
-import { MovieCard } from "../components/common/MovieCard";
-import { Pagination } from "../components/common/Pagination";
+import { Movie, MovieResponse } from "../types/movieType";
+import { MovieCard } from "../components/movieList/MovieCard";
+import { Pagination } from "../components/movieList/Pagination";
 import { ErrorPage } from "../components/common/ErrorPage";
 import { LoadingPage } from "../components/common/LoadingPage";
 
