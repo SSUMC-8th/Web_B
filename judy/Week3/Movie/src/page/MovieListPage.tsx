@@ -14,6 +14,10 @@ export const MovieListPage = () => {
   const type = window.location.pathname.split("/")[2];
 
   useEffect(() => {
+    setPage(1);
+  }, [type]);
+
+  useEffect(() => {
     setLoaing(true);
     //movie 데이터 가져오는 api
     const getUpcomingMovies = async () => {
@@ -32,6 +36,7 @@ export const MovieListPage = () => {
 
     getUpcomingMovies();
   }, [page, type]);
+
   return (
     <>
       {loading ? (
