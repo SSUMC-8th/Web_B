@@ -1,5 +1,5 @@
 import { Outlet } from "react-router-dom";
-import Nabar from "../component/nabar.tsx";
+import Nabar from "../components/navar";
 
 const RootLayout = () => {
     return (
