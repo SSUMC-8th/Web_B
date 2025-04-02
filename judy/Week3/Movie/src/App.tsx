@@ -4,6 +4,13 @@ import { HomePage } from "./page/HomePage";
 import { MovieListPage } from "./page/MovieListPage";
 import { MovieDetailPage } from "./page/MovieDetailPage";
 
+const movieListTypes = ["popular", "upcoming", "top_rated", "now_playing"];
+
+const movieListRoutes = movieListTypes.map((type) => ({
+  path: `movies/${type}`,
+  element: <MovieListPage />,
+}));
+
 const router = createBrowserRouter([
   {
     path: "/",
@@ -13,22 +20,7 @@ const router = createBrowserRouter([
         index: true,
         element: <HomePage />,
       },
-      {
-        path: "movies/popular",
-        element: <MovieListPage />,
-      },
-      {
-        path: "movies/upcoming",
-        element: <MovieListPage />,
-      },
-      {
-        path: "movies/top_rated",
-        element: <MovieListPage />,
-      },
-      {
-        path: "movies/now_playing",
-        element: <MovieListPage />,
-      },
+      ...movieListRoutes,
     ],
   },
   {
