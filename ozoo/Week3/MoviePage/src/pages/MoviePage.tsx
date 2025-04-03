@@ -28,7 +28,8 @@ const MoviesPage = () => {
             `https://api.themoviedb.org/3/movie/${params.category}?language=en-US&page=${page}`,
             {
               headers: {
-                Authorization: `Bearer ${import.meta.env.VITE_TMDB_KEY}`,
+                Authorization: `Bearer ${import.meta.env.VITE_TMDB_ACCESS_TOKEN}`,
+                Accept: "application/json",
               },
             }
           );
@@ -62,19 +63,18 @@ const MoviesPage = () => {
       <>
       <PageButtons page={page} setPage={setPage} />
       <div>
-        {isPending && (
+        {isPending ? (
           <div className="flex items-center justify-center h-dvh">
             <LoadingSpinner />
           </div>
+        ) : (
+          <div className="p-10 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+            {movies.map((movie) => (
+              <MovieCard key={movie.id} movie={movie} />
+            ))}
+          </div>
         )}
       </div>
-      {!isPending && (
-        <div className="p-10 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
-          {movies.map((movie) => (
-            <MovieCard key={movie.id} movie={movie} />
-          ))}
-        </div>
-      )}
       </>
     );
 
