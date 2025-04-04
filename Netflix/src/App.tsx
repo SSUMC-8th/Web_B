@@ -4,7 +4,6 @@ import React from 'react'
 import MoviePage from './pages/MoviePage';
 
 function App() {
-
   return (
     <>
       <MoviePage />
@@ -12,4 +11,4 @@ function App() {
   )
 }
 
-export default App
+export default App;
