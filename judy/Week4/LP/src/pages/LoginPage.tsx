@@ -2,17 +2,13 @@ import clsx from "clsx";
 import { useState } from "react";
 import { IoIosArrowBack } from "react-icons/io";
 import { Link } from "react-router-dom";
+import { emailRegEx, passwordRegEx } from "../utils/regex";
 
 export const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isEmailValid, setIsEmailValid] = useState(false);
   const [isPasswrodValid, setIsPasswordValid] = useState(false);
-
-  // 이메일, 비밀번호 정규식
-  const emailRegEx =
-    /^[A-Za-z0-9]([-_.]?[A-Za-z0-9])*@[A-Za-z0-9]([-_.]?[A-Za-z0-9])*\.[A-Za-z]{2,3}$/;
-  const passwordRegEx = /^[A-Za-z0-9]{8,20}$/;
 
   const onChangeEmail = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
@@ -35,7 +31,7 @@ export const LoginPage = () => {
   return (
     <div className="w-screen h-screen bg-black flex justify-center pt-20 text-white">
       <div className="flex flex-col">
-        {/* 회원가입 header */}
+        {/* 로그인 header */}
         <div className="flex w-60 justify-between items-center text-xl mb-7">
           <Link to={"/"}>
             <IoIosArrowBack />
