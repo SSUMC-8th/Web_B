@@ -1,31 +1,25 @@
-import { useState } from "react";
-import { emailRegEx } from "../../\butils/regex";
 import clsx from "clsx";
+import { useFormContext } from "react-hook-form";
+import { FormFields } from "../../context/SignupFormContext";
 
 interface Props {
   nextStep: () => void;
-  email: string;
-  setEmail: React.Dispatch<React.SetStateAction<string>>;
 }
 
-export const EmailInput = ({ nextStep, email, setEmail }: Props) => {
-  const [isEmailValid, setIsEmailValid] = useState(false);
+export const EmailInput = ({ nextStep }: Props) => {
+  const {
+    register,
+    watch,
+    formState: { errors },
+  } = useFormContext<FormFields>();
 
-  const onChangeEmail = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setEmail(e.target.value);
-    if (emailRegEx.test(e.target.value)) {
-      setIsEmailValid(true);
-    } else {
-      setIsEmailValid(false);
-    }
-  };
+  const email = watch("email");
+  // const onSubmit: SubmitHandler<FormFields> = (data) => {
+  //   console.log("클릭");
+  //   console.log(data);
+  //   nextStep();
+  // };
 
-  const onClickNext = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    if (isEmailValid) {
-      nextStep();
-    }
-  };
   return (
     <>
       {/* 소셜 로그인 */}
@@ -43,33 +37,30 @@ export const EmailInput = ({ nextStep, email, setEmail }: Props) => {
       </div>
 
       {/* 회원가입 입력 */}
-      <form className="flex flex-col gap-4">
+      <div className="flex flex-col gap-4">
         <input
-          type="email"
-          value={email}
-          onChange={onChangeEmail}
+          type={"email"}
+          {...register("email")}
           placeholder="이메일을 입력해주세요!"
-          className="border border-white rounded-md px-2 py-1 text-sm"
+          className={`border  rounded-md px-2 py-1 text-sm ${
+            errors.email ? "border-red-600" : "border-white"
+          }`}
         />
-        {email && !isEmailValid && (
-          <div className="text-red-600 text-xs">
-            올바른 이메일 형식을 입력해주세요.
-          </div>
+        {errors.email && (
+          <div className="text-red-600 text-xs">{errors.email.message}</div>
         )}
 
         <button
-          type="submit"
+          type="button"
           className={clsx(
-            "w-60 h-9  rounded-md cursor-pointer",
-            isEmailValid
-              ? "bg-pink-600 text-white"
-              : "bg-neutral-900 text-gray-400"
+            "w-60 h-9  rounded-md cursor-pointer bg-pink-600 text-white disabled:bg-neutral-900 disabled:text-gray-400"
           )}
-          onClick={onClickNext}
+          disabled={errors.email || email.length === 0 ? true : false}
+          onClick={nextStep}
         >
           다음
         </button>
-      </form>
+      </div>
     </>
   );
 };

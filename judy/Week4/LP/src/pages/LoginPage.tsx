@@ -1,33 +1,44 @@
 import clsx from "clsx";
-import { useState } from "react";
+
 import { IoIosArrowBack } from "react-icons/io";
-import { Link } from "react-router-dom";
-import { emailRegEx, passwordRegEx } from "../utils/regex";
+import { Link, useNavigate } from "react-router-dom";
+import { UserSigninInfomation, validateSignin } from "../utils/regex";
+import useForm from "../hooks/useForm";
+import { apiClient } from "../api/apiClient";
+import { LoginRequest } from "../types/LoginType";
 
 export const LoginPage = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [isEmailValid, setIsEmailValid] = useState(false);
-  const [isPasswrodValid, setIsPasswordValid] = useState(false);
+  const navigate = useNavigate();
+  const { values, errors, touched, getInputProps } =
+    useForm<UserSigninInfomation>({
+      initalValue: {
+        email: "",
+        password: "",
+      },
+      validate: validateSignin,
+    });
 
-  const onChangeEmail = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setEmail(e.target.value);
-    if (emailRegEx.test(e.target.value)) {
-      setIsEmailValid(true);
-    } else {
-      setIsEmailValid(false);
+  const handleSubmit = async () => {
+    console.log(values);
+
+    try {
+      const response = await apiClient.post<LoginRequest>("/auth/signin", {
+        email: values.email,
+        password: values.password,
+      });
+      const data = response.data.data;
+      localStorage.setItem("accessToken", data.accessToken);
+      localStorage.setItem("refreshToken", data.refreshToken);
+      navigate("/");
+    } catch (e) {
+      console.error(e);
     }
   };
 
-  const onChangePassword = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setPassword(e.target.value);
-    if (passwordRegEx.test(e.target.value)) {
-      setIsPasswordValid(true);
-    } else {
-      setIsPasswordValid(false);
-    }
-  };
-
+  // 오류가 하나라도 있거나, 입력값이 비어있으면 버튼을 비활성화
+  const isDisabled =
+    Object.values(errors || {}).some((error) => error.length > 0) || // 오류가 있으면 true
+    Object.values(values).some((value) => value === ""); // 입력값이 비어있으면 true
   return (
     <div className="w-screen h-screen bg-black flex justify-center pt-20 text-white">
       <div className="flex flex-col">
@@ -54,43 +65,42 @@ export const LoginPage = () => {
         </div>
 
         {/* 로그인 입력 */}
-        <form className="flex flex-col gap-4">
+        <div className="flex flex-col gap-4">
           <input
+            {...getInputProps("email")}
             type="email"
-            value={email}
-            onChange={onChangeEmail}
+            name="email"
             placeholder="이메일을 입력해주세요!"
-            className="border border-white rounded-md px-2 py-1"
+            className={`border  rounded-md px-2 py-1 ${
+              errors?.email && touched?.email
+                ? "border-red-600"
+                : "border-white"
+            }`}
           />
-          {email && !isEmailValid && (
-            <div className="text-red-600 text-xs">
-              올바른 이메일 형식을 입력해주세요.
-            </div>
+          {errors?.email && touched?.email && (
+            <div className="text-red-600 text-xs">{errors?.email}</div>
           )}
           <input
+            {...getInputProps("password")}
             type="password"
-            value={password}
-            onChange={onChangePassword}
+            name="password"
             placeholder="비밀번호를 입력해주세요!"
             className="border border-white rounded-md px-2 py-1"
           />
-          {password && !isPasswrodValid && (
-            <div className="text-red-600 text-xs">
-              비밀번호는 8자 이상이어야합니다.
-            </div>
+          {errors?.password && touched?.password && (
+            <div className="text-red-600 text-xs">{errors?.password}</div>
           )}
           <button
-            type="submit"
+            type="button"
             className={clsx(
-              "w-60 h-9  rounded-md cursor-pointer",
-              isEmailValid && isPasswrodValid
-                ? "bg-pink-600 text-white"
-                : "bg-neutral-900 text-gray-400"
+              "w-60 h-9  rounded-md cursor-pointer bg-pink-600 text-white disabled:bg-neutral-900 disabled:text-gray-400"
             )}
+            onClick={handleSubmit}
+            disabled={isDisabled}
           >
             로그인
           </button>
-        </form>
+        </div>
       </div>
     </div>
   );
