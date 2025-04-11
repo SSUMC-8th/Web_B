@@ -1,8 +1,10 @@
 import './App.css';
+import HomePage from './pages/HomePage';
 import MovieDetailPage from './pages/MovieDetailPage';
 
 import MoviePage from './pages/MoviePage'
 import{createBrowserRouter,RouterProvider}from 'react-router-dom'
+import NotFoundPage from './pages/NotFoundPage';
 
 
 const router = createBrowserRouter([

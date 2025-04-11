@@ -1,40 +1,52 @@
-import axios from 'axios'
-import { useState, useEffect } from 'react'
+
 import {Params, useParams} from 'react-router-dom'
-import { Movie, MovieDetailResponse, MovieResponse } from '../types/movie'
+import { MovieDetailResponse } from '../types/movie'
+import useCustomFetch from '../hooks/useCustomFetch'
+import LoadingSpinner from '../components/LoadingSpinner'
 
 const MovieDetailPage =() => {
   
   const params:Readonly<Params<string>> = useParams()
-  const [movie,setMovie] = useState<MovieDetailResponse>()
-  const [isPending,setIsPending] = useState(false) // loading state
-  const [isError,setIsError] = useState(false) // error state
+  const url = `https://api.themoviedb.org/3/movie/${params.movieId}`
+  const {isPending, isError, data:movie} = useCustomFetch<MovieDetailResponse>(url,'en-US')
+
+  // const [movie,setMovie] = useState<MovieDetailResponse>()
+  // const [isPending,setIsPending] = useState(false) // loading state
+  // const [isError,setIsError] = useState(false) // error state
 
 
-  useEffect(() => {
-    const fetchMovies = async () => {
-      setIsPending(true)
+  // useEffect(() => {
+  //   const fetchMovies = async () => {
+  //     setIsPending(true)
 
-      try{
-        const {data} = await axios.get<MovieDetailResponse>(
-          `https://api.themoviedb.org/3/movie/${params.movieId}`,
-          {
-            headers: {
-              Authorization: `Bearer ${import.meta.env.VITE_TMDB_KEY}`,
-            }
-          },
-        );
+  //     try{
+  //       const {data} = await axios.get<MovieDetailResponse>(
+  //         ``,
+  //         {
+  //           headers: {
+  //             Authorization: `Bearer ${import.meta.env.VITE_TMDB_KEY}`,
+  //           }
+  //         },
+  //       );
 
-        setMovie(data);
-      }catch{
-        setIsError(true);
-      }finally{
-        setIsPending(false);
-      }      
-    };
+  //       setMovie(data);
+  //     }catch{
+  //       setIsError(true);
+  //     }finally{
+  //       setIsPending(false);
+  //     }      
+  //   };
   
-    fetchMovies();
-  }, [params.movieId]);
+  //   fetchMovies();
+  // }, [params.movieId]);
+
+  if(isPending){
+    return (
+      <div className='flex items-center justify-center h-dvh'>
+              <LoadingSpinner />
+      </div>
+    )
+  }
 
   if(isError){
     return(
@@ -45,7 +57,15 @@ const MovieDetailPage =() => {
   }
 
   console.log(params);
-  return <div>MovieDetailPage{params.movieId}</div>
+  return (
+    <div>
+      MovieDetailPage{params.movieId}
+      {movie?.id}
+      {movie?.production_companies.map((company)=>company.name)}
+      {movie?.original_title}
+      {movie?.overview}
+    </div>
+  )
 }
 
 export default MovieDetailPage
