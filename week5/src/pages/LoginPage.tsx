@@ -1,8 +1,13 @@
+import { postSignin } from '../apis/auth';
 import useForm from '../hooks/useForm';
+import { useLocalStorage } from '../hooks/useLocalStorage';
 import { UserSigninInformation, validateSignin } from '../utils/validate';
-import axios from 'axios';
+
+
 
 const LoginPage = () => {
+
+  const{setItem} = useLocalStorage('LOCAL_STORAGE_KEY.ACCESS_TOKEN') 
 
   const {values, errors,touched, getInputProps} = useForm<UserSigninInformation>({
     initialValues: {
@@ -14,6 +19,14 @@ const LoginPage = () => {
 
 
   const handleSubmit = async() => {
+    try{
+      const response = await postSignin(values)
+      console.log(response)
+      // 로그인 성공 시 accessToken을 localStorage에 저장
+      setItem(response.data.accessToken)
+    } catch (error) {
+      alert("로그인에 실패했습니다.")
+    }
     
   }
 
