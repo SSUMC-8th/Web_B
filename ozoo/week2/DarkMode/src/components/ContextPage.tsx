@@ -2,7 +2,7 @@ import { ThemeProvider } from "../context/ThemeProvider";
 import { Navbar } from "./Navbar";
 import { ThemeContent } from "./ThemeContent";
 
-export const ContextPage = () => {
+export const ContextPage = () => { 
   return (
     <>
       <ThemeProvider>
