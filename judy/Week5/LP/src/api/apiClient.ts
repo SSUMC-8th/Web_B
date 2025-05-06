@@ -75,6 +75,7 @@ apiClient.interceptors.response.use(
             window.localStorage.removeItem("accessToken");
             window.localStorage.removeItem("refreshToken");
             window.location.href = "/login";
+            console.log(error);
           })
           .finally(() => {
             refreshPromise = null;

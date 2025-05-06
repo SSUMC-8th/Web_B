@@ -33,9 +33,9 @@ export const MyPage = () => {
     // 내 정보 조회
     const getMyInfo = async () => {
       try {
-        const { data } = await apiClient.get<IFMyInfo>("/users/me");
-        console.log(data);
-        setMyInfo(data.data);
+        const response = await apiClient.get<IFMyInfo>("/users/me");
+        console.log(response);
+        setMyInfo(response.data.data);
       } catch (error) {
         console.log(error);
         alert("마이페이지 정보를 가져오는데 오류가 발생했습니다.");
