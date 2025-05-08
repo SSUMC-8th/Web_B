@@ -7,15 +7,19 @@ import HomeLayout from "./layouts/HomeLayout";
 import SignupPage from "./pages/SignupPage";
 import Mypage from "./pages/MyPage.tsx";
 import GoogleCallback from "./pages/GoogleCallback";
+import LPDetail from "./pages/LPDetail.tsx";
 
 import ProtectedRoute from "../src/components/ProtectedRoute";
 import { AuthProvider } from "./context/AuthContext"; 
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
+
+const queryClient = new QueryClient();
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <HomeLayout />,
+    element: <HomeLayout />, // ✅ 모든 하위 경로는 이 레이아웃을 씀
     errorElement: <NotFoundPage />,
     children: [
       { index: true, element: <HomePage /> },
@@ -29,6 +33,14 @@ const router = createBrowserRouter([
           </ProtectedRoute>
         ),
       },
+      {
+        path: "lp/:LPid",
+        element: (
+          <ProtectedRoute>
+            <LPDetail />
+          </ProtectedRoute>
+        ),
+      },
     ],
   },
   {
@@ -39,10 +51,13 @@ const router = createBrowserRouter([
 
 function App() {
   return (
-    <AuthProvider>
-      <RouterProvider router={router} />
-    </AuthProvider>
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <RouterProvider router={router} />
+      </AuthProvider>
+    </QueryClientProvider>
   );
 }
+
 
 export default App;

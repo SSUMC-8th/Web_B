@@ -30,17 +30,18 @@ const LoginPage = () => {
   const { login } = useAuthContext();
 
   const handleGoogleLogin = () => {
-    window.location.href = "http://localhost:8000/v1/auth/google/login";
+    const API_URL = import.meta.env.VITE_API_URL;
+    window.location.href = `${API_URL}/auth/google/login`;
   };
 
   const onSubmit = async (values: LoginForm) => {
     try {
       const res = await signin(values);
-      const { accessToken, refreshToken, name } = res.data.data;
+      const { accessToken, refreshToken, name, email } = res.data.data;
       alert(`환영합니다, ${name}님!`);
   
-      // ✅ 여기
-      await login({ accessToken, refreshToken });
+      
+      await login({ accessToken, refreshToken, user: { name, email } });
   
       navigate("/");
     } catch (err: any) {

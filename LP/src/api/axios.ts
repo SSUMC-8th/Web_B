@@ -1,5 +1,5 @@
 import axios from "axios";
-import { ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY } from "../constants/key";
+import { ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY } from "../constants/key";
 
 import { logoutUser } from "../utils/logout";
 
