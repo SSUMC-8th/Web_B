@@ -2,7 +2,6 @@ import { useQuery } from '@tanstack/react-query';
 import { PaginationDto } from '../../types/common';
 import { getLpList } from '../../apis/lp';
 import { QUERY_KEY } from '../../constants/key';
-import { data } from 'react-router-dom';
 
 function useGetLpList({cursor,search,order,limit}:PaginationDto){
   return useQuery({

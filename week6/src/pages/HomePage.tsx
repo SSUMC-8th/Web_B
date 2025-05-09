@@ -45,12 +45,11 @@ const HomePage = () => {
       <input value={search} onChange={(e)=> setSearch(e.target.value)} />
 
       <div className={'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4'}>
-      {!isPending && <LpCardSkeletonList count={20}/>}
+      {(isFetching || isPending) && <LpCardSkeletonList count={20}/>}
         {lps?.pages
           ?.map((page)=>page.data.data)
           ?.flat()
           ?.map((lp) => <LpCard key={lp.id} lp={lp}/>)}
-          {isFetching && <LpCardSkeletonList count={20}/>}
       </div>
       <div ref={ref} className='h-2'></div>
     </div>
