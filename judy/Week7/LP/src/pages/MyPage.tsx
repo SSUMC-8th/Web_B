@@ -3,7 +3,7 @@ import { apiClient } from "../api/apiClient";
 import { FaCheck, FaUserCircle } from "react-icons/fa";
 import { TiPencil } from "react-icons/ti";
 import { useNavigate } from "react-router-dom";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 interface IFMyInfo {
   status: boolean;
@@ -40,6 +40,7 @@ export const MyPage = () => {
   const [newImg, setNewImg] = useState<string | null>(null);
   const [newImgFile, setNewImgFile] = useState<File | null>(null);
   const [modify, setModify] = useState<boolean>(false);
+  const queryClient = useQueryClient();
   const navigate = useNavigate();
 
   // 내 정보 조회
@@ -51,6 +52,7 @@ export const MyPage = () => {
       setNewImg(response.data.data.avatar || null);
       setNewName(response.data.data.name);
       setNewBio(response.data.data.bio || null);
+      queryClient.invalidateQueries({ queryKey: ["userInfo"] });
     } catch (error) {
       console.log(error);
       alert("마이페이지 정보를 가져오는데 오류가 발생했습니다.");
@@ -100,13 +102,36 @@ export const MyPage = () => {
     mutationFn: async (data: UserRequest) => {
       await apiClient.patch("/users", data);
     },
-    onSuccess: () => {
-      setModify(false);
-      getMyInfo();
+    onMutate: async (newData) => {
+      await queryClient.cancelQueries({ queryKey: ["userInfo"] });
+
+      const previous = queryClient.getQueryData(["userInfo"]);
+
+      queryClient.setQueryData(["userInfo"], (old: any) => {
+        if (!old?.data) return old;
+
+        return {
+          ...old,
+          data: {
+            ...old.data,
+            name: newData.name,
+            bio: newData.bio,
+            avatar: newData.avatar,
+          },
+        };
+      });
+
+      return { previous };
     },
-    onError: (err) => {
-      console.error(err);
-      alert("정보를 수정하는데 오류가 발생했습니다.");
+    onError: (err, _, context) => {
+      if (context?.previous) {
+        queryClient.setQueryData(["userInfo"], context.previous);
+      }
+    },
+
+    onSettled: () => {
+      setModify(false);
+      queryClient.invalidateQueries({ queryKey: ["userInfo"] });
     },
   });
 

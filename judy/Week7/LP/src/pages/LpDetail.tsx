@@ -1,7 +1,7 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { apiClient } from "../api/apiClient";
 import { formatDistanceToNow } from "date-fns";
-import { FaHeart, FaPen, FaTrashAlt } from "react-icons/fa";
+import { FaHeart, FaPen, FaRegHeart, FaTrashAlt } from "react-icons/fa";
 import { CommentList } from "../components/LpDetail/CommentList";
 import { ChangeEvent, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -19,6 +19,7 @@ export const LpDetail = () => {
   const [newTitle, setNewTitle] = useState<string>("");
   const [newContent, setNewContent] = useState<string>("");
   const [like, setLike] = useState<boolean>(false);
+  const queryClient = useQueryClient();
   const navigate = useNavigate();
   const pathname = window.location.pathname;
   const userId = localStorage.getItem("id");
@@ -38,8 +39,15 @@ export const LpDetail = () => {
     if (data?.data) {
       setNewTitle(data.data.title);
       setNewContent(data.data.content);
+
+      const isLiked = data.data.likes.some(
+        (like: { id: number; userId: number; lpId: number }) =>
+          like.userId === Number(userId)
+      );
+
+      setLike(isLiked);
     }
-  }, [data?.data]);
+  }, [data?.data, userId]);
 
   // 제목 onChange 함수
   const onChangeTitle = (e: ChangeEvent<HTMLInputElement>) => {
@@ -79,6 +87,84 @@ export const LpDetail = () => {
     },
   });
 
+  // 좋아요
+  const likeMutation = useMutation({
+    mutationFn: async () => {
+      await apiClient.post(`/lps/${lpId}/likes`);
+    },
+    onMutate: async () => {
+      // 요청 중인 쿼리 중단
+      await queryClient.cancelQueries({ queryKey: ["lpDetail", lpId] });
+
+      // 이전 데이터 백업
+      const previous = queryClient.getQueryData(["lpDetail", lpId]);
+
+      // 캐시 직접 업데이트
+      queryClient.setQueryData(["lpDetail", lpId], (old: any) => {
+        if (!old?.data) return old;
+        return {
+          ...old,
+          data: {
+            ...old.data,
+            likes: [...old.data.likes, { userId }],
+          },
+        };
+      });
+      //UI도 변경
+      setLike(true);
+
+      // rollback을 위한 이전 데이터 리턴
+      return { previous };
+    },
+    onError: (err, _, context) => {
+      if (context?.previous) {
+        queryClient.setQueryData(["lpDetail", lpId], context.previous);
+      }
+      setLike(false); //롤백
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ["lpDetail", lpId] });
+    },
+  });
+
+  // 좋아요 취소
+  const unLikeMutation = useMutation({
+    mutationFn: async () => {
+      await apiClient.delete(`/lps/${lpId}/likes`);
+    },
+    onMutate: async () => {
+      await queryClient.cancelQueries({ queryKey: ["lpDetail", lpId] });
+
+      const previous = queryClient.getQueryData(["lpDetail", lpId]);
+
+      queryClient.setQueryData(["lpDetail", lpId], (old: any) => {
+        if (!old?.data) return old;
+        return {
+          ...old,
+          data: {
+            ...old.data,
+            likes: old.data.likes.filter(
+              (like: { userId: string }) => like.userId !== userId
+            ),
+          },
+        };
+      });
+
+      setLike(false);
+      return { previous };
+    },
+    onError: (err, _, context) => {
+      if (context?.previous) {
+        queryClient.setQueryData(["lpDetail", lpId], context.previous);
+      }
+
+      setLike(true);
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ["lpDetail", lpId] });
+    },
+  });
+
   const onUpdatePost = () => {
     if (!lpInfo) return;
     const tagNames = lpInfo.tags.map(
@@ -101,6 +187,14 @@ export const LpDetail = () => {
 
   const onDeletePost = () => {
     deletePostMutation.mutate();
+  };
+
+  const likePost = () => {
+    likeMutation.mutate();
+  };
+
+  const unLikePost = () => {
+    unLikeMutation.mutate();
   };
 
   if (isLoading) {
@@ -181,20 +275,28 @@ export const LpDetail = () => {
         )}
 
         {/* 태그 */}
-        <div>
+        <div className="flex">
           {lpInfo.tags.map((lp: { id: number; name: string }) => (
             <div
               key={lp.id}
-              className="w-14 h-7 bg-neutral-500 flex items-center justify-center rounded-full"
+              className="px-5 bg-neutral-500 flex items-center justify-center rounded-full"
             >
-              {lp.name}
+              # {lp.name}
             </div>
           ))}
         </div>
 
         {/* 좋아요 */}
         <div className="flex items-center justify-center gap-2">
-          <FaHeart className="text-pink-600" />
+          {like ? (
+            <FaHeart
+              className="text-pink-600 cursor-pointer"
+              onClick={unLikePost}
+            />
+          ) : (
+            <FaRegHeart className="cursor-pointer" onClick={likePost} />
+          )}
+
           {lpInfo.likes.length}
         </div>
       </div>
