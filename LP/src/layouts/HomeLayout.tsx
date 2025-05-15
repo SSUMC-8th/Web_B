@@ -1,24 +1,42 @@
+import { useState, useEffect } from "react";
+import Header from "../components/Header";
+import Sidebar from "../components/Sidebar";
 import { Outlet } from "react-router-dom";
 
 const HomeLayout = () => {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 768) {
+        setIsSidebarOpen(true);
+      } else {
+        setIsSidebarOpen(false);
+      }
+    };
+
+    handleResize(); // initialize once
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   return (
-    <div className="min-h-screen w-screen bg-black text-white flex flex-col">
-      <header className="flex justify-between items-center px-6 py-4 bg-black z-50">
-        <h1 className="text-pink-500 font-bold text-lg">돌려돌려LP판</h1>
-        <a
-          href="/mypage"
-          className="bg-blue-500 text-white px-4 py-2 rounded-sm hover:bg-blue-600"
-        >
-          마이페이지
-        </a>
-      </header>
+    <div className="flex flex-col min-h-screen bg-black text-white">
+      <div className="sticky top-0 z-50">
+        <Header onToggleSidebar={() => setIsSidebarOpen((prev) => !prev)} />
+      </div>
+      <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
 
-      <main className="flex-grow flex items-center justify-center px-4">
-        <Outlet />
-      </main>
+      {/* Main content */}
+      <div className="flex flex-1 overflow-hidden">
+        <main className="flex-1 p-6 overflow-y-auto z-0">
+          <Outlet />
+        </main>
+      </div>
 
-      <footer className="bg-gray-800 text-white p-4 text-center">
-        <p>푸터</p>
+      <footer className="bg-gray-800 text-white text-center py-4">
+        © 2025 돌려돌려 LP판. All rights reserved.
       </footer>
     </div>
   );
