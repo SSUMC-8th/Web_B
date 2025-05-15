@@ -1,6 +1,7 @@
+import React from "react";
 import { useAuthContext } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
-import { FiSearch } from "react-icons/fi"; 
+import { FiSearch } from "react-icons/fi";
 
 interface HeaderProps {
   onToggleSidebar: () => void;
@@ -16,10 +17,7 @@ const Header = ({ onToggleSidebar }: HeaderProps) => {
     <header className="flex justify-between items-center px-6 py-4 bg-[#121212] z-50 h-16">
       {/* 왼쪽: 햄버거 + 로고 */}
       <div className="flex items-center gap-4">
-        <button
-          className="text-white text-2xl"
-          onClick={onToggleSidebar}
-        >
+        <button className="text-white text-2xl" onClick={onToggleSidebar}>
           ☰
         </button>
         <h1
@@ -34,11 +32,10 @@ const Header = ({ onToggleSidebar }: HeaderProps) => {
       <div className="flex items-center gap-4">
         {/* 검색 아이콘 */}
         <FiSearch className="text-white text-xl cursor-pointer" />
-        
 
         {isLoggedIn ? (
           <>
-            <span className="text-white text-sm">
+            <span key={user?.name} className="text-white text-sm">
               {user?.name ?? "회원"}님 반갑습니다.
             </span>
             <button
@@ -69,4 +66,4 @@ const Header = ({ onToggleSidebar }: HeaderProps) => {
   );
 };
 
-export default Header;
+export default React.memo(Header);

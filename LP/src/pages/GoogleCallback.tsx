@@ -25,18 +25,21 @@ const GoogleCallback = () => {
 
     const fetchEmailAndLogin = async () => {
       try {
-        const res = await axios.get(`${import.meta.env.VITE_API_URL}/users/${userId}`, {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        });
+        const res = await axios.get(
+          `${import.meta.env.VITE_API_URL}/users/${userId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        );
 
         const { email } = res.data.data;
 
         await login({
           accessToken,
           refreshToken,
-          user: { name, email },
+          user: { id: Number(userId), name, email },
         });
 
         alreadyHandled.current = true;
