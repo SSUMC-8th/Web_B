@@ -49,6 +49,7 @@ const Mypage = () => {
     },
     onSuccess: (res) => {
       setUser(res.data.data);
+      localStorage.setItem("user", JSON.stringify(res.data.data));
     },
     onError: () => {
       alert("수정 실패");

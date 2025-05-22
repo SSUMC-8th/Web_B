@@ -1,4 +1,4 @@
-import React from "react";
+import { useState } from "react";
 import { useAuthContext } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { FiSearch } from "react-icons/fi";
@@ -31,7 +31,11 @@ const Header = ({ onToggleSidebar }: HeaderProps) => {
       {/* 오른쪽: 검색 + 로그인 영역 */}
       <div className="flex items-center gap-4">
         {/* 검색 아이콘 */}
-        <FiSearch className="text-white text-xl cursor-pointer" />
+        <div className="flex items-center">
+          <button onClick={() => navigate("/search")}>
+            <FiSearch className="text-white text-xl cursor-pointer" />
+          </button>
+        </div>
 
         {isLoggedIn ? (
           <>
@@ -66,4 +70,4 @@ const Header = ({ onToggleSidebar }: HeaderProps) => {
   );
 };
 
-export default React.memo(Header);
+export default Header;

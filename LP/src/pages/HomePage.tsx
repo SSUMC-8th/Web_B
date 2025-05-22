@@ -120,6 +120,7 @@ const HomePage = () => {
                     title: string;
                     createdAt: string;
                     likeCount?: number;
+                    likes?: any[];
                   }) => (
                     <LPCard
                       key={lp.id}
@@ -127,7 +128,7 @@ const HomePage = () => {
                       thumbnail={lp.thumbnail}
                       title={lp.title}
                       createdAt={lp.createdAt}
-                      likeCount={lp.likeCount ?? 0}
+                      likeCount={lp.likes?.length ?? 0}
                       onClick={() => handleCardClick(lp.id)}
                     />
                   )

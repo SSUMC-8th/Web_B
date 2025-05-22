@@ -21,6 +21,7 @@ const LPDetail = () => {
   const [editContent, setEditContent] = useState("");
   const [editThumbnail, setEditThumbnail] = useState("");
   const [editTags, setEditTags] = useState("");
+  const [isLiking, setIsLiking] = useState(false);
 
   const {
     data: lp,
@@ -28,23 +29,15 @@ const LPDetail = () => {
     isError,
   } = useQuery({
     queryKey: ["lpDetail", LPid],
-
     queryFn: () => fetchLpDetail(LPid!),
     enabled: !!LPid,
-    onSuccess: async (data) => {
+    onSuccess: (data) => {
+      setLiked(data.likes.some((like: any) => like.userId === user?.id));
       setLikeCount(data.likes.length);
-
-      try {
-        const res = await api.get("/lps/likes/me");
-        const likedLpIds = res.data.data.map((lp: any) => lp.id);
-        setLiked(likedLpIds.includes(data.id));
-      } catch (err) {
-        console.error("내 좋아요 정보 불러오기 실패", err);
-      }
     },
   });
 
-  // 좋아요 토글 서버 요청 (Optimistic Update 추가)
+  // 좋아요 토글 서버 요청 (Simplified)
   const { mutate: toggleLike } = useMutation({
     mutationFn: async (prevLiked: boolean) => {
       if (prevLiked) {
@@ -53,49 +46,40 @@ const LPDetail = () => {
         return await api.post(`/lps/${LPid}/likes`);
       }
     },
-    onMutate: async () => {
-      const prevLiked = liked;
+    onMutate: (prevLiked) => {
       const nextLiked = !prevLiked;
       setLiked(nextLiked);
       setLikeCount((count) => (nextLiked ? count + 1 : count - 1));
       return prevLiked;
+    },
+    onError: (err: any, prevLiked) => {
+      setLiked(prevLiked);
+      if (err.response?.status === 409) {
+        alert("이미 좋아요가 되어 있거나 오류가 발생했습니다.");
+      } else {
+        console.error("좋아요 처리 실패", err);
+        alert("좋아요 처리에 실패했습니다.");
+      }
     },
     onSuccess: async () => {
       try {
         const res = await api.get(`/lps/${LPid}`);
         const updatedLp = res.data.data;
         setLiked(updatedLp.likes.some((like: any) => like.userId === user?.id));
-        setLikeCount(updatedLp.likes.length);
       } catch (err) {
         console.error("좋아요 상태 재조회 실패", err);
       }
     },
-    onError: async (err: any, prevLiked) => {
-      const rollbackLiked = prevLiked;
-      setLiked(rollbackLiked);
-      setLikeCount((count) => (rollbackLiked ? count + 1 : count - 1));
-
-      if (err.response?.status === 409 || err.response?.status === 404) {
-        try {
-          const res = await api.get(`/lps/${LPid}`);
-          const updatedLp = res.data.data;
-          setLiked(
-            updatedLp.likes.some((like: any) => like.userId === user?.id)
-          );
-          setLikeCount(updatedLp.likes.length);
-        } catch (fetchErr) {
-          console.error("좋아요 상태 재조회 실패 (fallback)", fetchErr);
-        }
-        return;
-      }
-
-      console.error("좋아요 처리 실패", err);
-      alert("좋아요 처리에 실패했습니다.");
-    },
   });
 
   const handleLike = () => {
-    toggleLike(liked);
+    if (isLiking) return;
+    setIsLiking(true);
+    toggleLike(liked, {
+      onSettled: () => {
+        setIsLiking(false);
+      },
+    });
   };
 
   const isAuthor = user?.id === lp?.author?.id;
@@ -182,7 +166,7 @@ const LPDetail = () => {
               handleLike={handleLike}
             />
           )}
-          {!editMode && <CommentSection LPid={LPid} user={user} />}
+          {!editMode && <CommentSection LPid={Number(LPid)} user={user} />}
         </div>
       </main>
     </div>
