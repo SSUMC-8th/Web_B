@@ -13,6 +13,8 @@ import { ProtectedLayout } from "./layout/ProtectedLayout";
 import { AuthCallbackPage } from "./pages/AuthCallbackPage";
 import { HomePage } from "./pages/HomePage";
 import { LpDetail } from "./pages/LpDetail";
+import { SearchPage } from "./pages/SearchPage";
+import { ThrottlePage } from "./pages/ThrottlePage";
 
 //publicRoutes : 인증 없이 접근 가능한 라우트
 const publicRoutes: RouteObject[] = [
@@ -46,6 +48,14 @@ const publicRoutes: RouteObject[] = [
           {
             path: "/lp/:lpId",
             element: <LpDetail />,
+          },
+          {
+            path: "/search",
+            element: <SearchPage />,
+          },
+          {
+            path: "/throttle",
+            element: <ThrottlePage />,
           },
         ],
       },

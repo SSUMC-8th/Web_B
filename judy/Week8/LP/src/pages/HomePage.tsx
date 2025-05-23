@@ -4,6 +4,7 @@ import { useInfiniteQuery } from "@tanstack/react-query";
 import { LpCard } from "../components/homePage/LpCard";
 import { LpCardSkeleton } from "../components/homePage/LpCardSkeleton";
 import { PostButton } from "../components/homePage/PostButton";
+import useThrottleCallback from "../hooks/useThrottleCallback";
 
 export interface IFLpContent {
   id: number;
@@ -38,20 +39,20 @@ export const HomePage = () => {
         lastPage.data.hasNext ? lastPage.data.nextCursor : undefined,
     });
 
-  // 스크롤 이벤트
+  const handleScroll = useThrottleCallback(() => {
+    console.log("시작");
+
+    const isBottom =
+      window.innerHeight + window.scrollY >=
+      document.documentElement.scrollHeight - 100;
+
+    setIsScrollAtBottom(isBottom);
+  }, 2000);
+
   useEffect(() => {
-    const handleScroll = () => {
-      // 화면 높이 + 스크롤된 높이가 전체 문서 높이에 가까우면
-      const isBottom =
-        window.innerHeight + window.scrollY >=
-        document.documentElement.scrollHeight - 100;
-
-      setIsScrollAtBottom(isBottom);
-    };
-
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [handleScroll]);
 
   // 스크롤이 하단에 도달하면 다음 페이지 로드
   useEffect(() => {
