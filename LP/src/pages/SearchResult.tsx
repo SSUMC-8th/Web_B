@@ -12,11 +12,10 @@ const SearchResult = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const search = searchParams.get("search") || "";
   const sort = searchParams.get("sort") || "desc";
-  const type = searchParams.get("type") || "title";
 
   const [inputValue, setInputValue] = useState(search);
   const [searchType, setSearchType] = useState<"title" | "tag">(
-    type === "tag" ? "tag" : "title"
+    searchParams.get("type") === "tag" ? "tag" : "title"
   );
   const [sortOrder, setSortOrder] = useState<"latest" | "oldest">(
     sort === "asc" ? "oldest" : "latest"
@@ -49,7 +48,7 @@ const SearchResult = () => {
   } = useInfiniteQuery({
     queryKey: ["search", debouncedSearch, sortOrder, searchType],
     queryFn: async ({ pageParam = 0 }) => {
-      console.log("🚀 fetching LPs...");
+      console.log("fetching LPs...");
       const res = await api.get("/lps", {
         params: {
           search: debouncedSearch,
