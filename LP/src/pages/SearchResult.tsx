@@ -55,7 +55,7 @@ const SearchResult = () => {
           order: sortOrder === "latest" ? "desc" : "asc",
           type: searchType,
           cursor: pageParam,
-          limit: 6,
+          limit: 12,
         },
       });
       console.log(res.data);
@@ -70,21 +70,22 @@ const SearchResult = () => {
     if (hasNextPage && !isFetchingNextPage) {
       fetchNextPage();
     }
-  }, 1000);
+  }, 3000);
 
   useEffect(() => {
     const handleScroll = () => {
-      if (
-        window.innerHeight + window.scrollY >=
-        document.body.offsetHeight - 300
-      ) {
+      const scrollTop = window.scrollY;
+      const viewportHeight = window.innerHeight;
+      const fullHeight = document.documentElement.scrollHeight;
+
+      if (scrollTop + viewportHeight >= fullHeight - 300) {
         throttledFetchNext();
       }
     };
 
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
-  }, [throttledFetchNext]);
+  }, [throttledFetchNext, hasNextPage, isFetchingNextPage]);
 
   return (
     <div className="p-6 text-white max-w-4xl mx-auto">
@@ -134,28 +135,37 @@ const SearchResult = () => {
         <>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
             {data?.pages.flatMap((page) =>
-              page.data.map((lp: any) => (
-                <div key={lp.id}>
-                  <LPCard
-                    id={lp.id}
-                    thumbnail={lp.thumbnail}
-                    title={lp.title}
-                    createdAt={lp.createdAt}
-                    likeCount={lp.likes.length}
-                    onClick={() => (window.location.href = `/lp/${lp.id}`)}
-                  />
-                  <div className="mt-2 flex flex-wrap gap-2">
-                    {lp.tags.map((tag: any) => (
-                      <span
-                        key={tag.id}
-                        className="bg-pink-500 text-white text-xs px-2 py-1 rounded-full"
-                      >
-                        #{tag.name}
-                      </span>
-                    ))}
+              page.data.map((lp: any) => {
+                return (
+                  <div key={lp.id}>
+                    <LPCard
+                      id={lp.id}
+                      thumbnail={
+                        lp.thumbnail.startsWith("data:image/") ||
+                        lp.thumbnail.startsWith("http")
+                          ? lp.thumbnail
+                          : `${import.meta.env.VITE_API_URL}/uploads/${
+                              lp.thumbnail
+                            }`
+                      }
+                      title={lp.title}
+                      createdAt={lp.createdAt}
+                      likeCount={lp.likes.length}
+                      onClick={() => (window.location.href = `/lp/${lp.id}`)}
+                    />
+                    <div className="mt-2 flex flex-wrap gap-2">
+                      {lp.tags.map((tag: any) => (
+                        <span
+                          key={tag.id}
+                          className="bg-pink-500 text-white text-xs px-2 py-1 rounded-full"
+                        >
+                          #{tag.name}
+                        </span>
+                      ))}
+                    </div>
                   </div>
-                </div>
-              ))
+                );
+              })
             )}
           </div>
         </>
