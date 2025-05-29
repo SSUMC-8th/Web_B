@@ -1,7 +1,7 @@
 import type { RootState } from '../store/store'
 import { useSelector } from 'react-redux'
 import { useDispatch } from '../hooks/useCustomRedux'
-import { clearCart } from '../slices/cartSlice'
+import { openModal } from '../slices/modalSlice'
 
 
 export const PriceBox = () => {
@@ -9,7 +9,7 @@ export const PriceBox = () => {
   const {total} = useSelector((state:RootState) => state.cart)
   const dispatch = useDispatch()
   const handleInitializeCart = () => {
-    dispatch(clearCart())
+    dispatch(openModal())
   }
 
   return (
