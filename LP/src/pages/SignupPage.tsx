@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -34,6 +34,7 @@ const SignupPage = () => {
   const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false); // 추가
   const [confirmError, setConfirmError] = useState("");
   const [nickname, setNickname] = useState("");
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
@@ -81,16 +82,17 @@ const SignupPage = () => {
   const handleSignup = async () => {
     try {
       const res = await signup({
-        name: nickname,                // nickname을 name으로 매핑
+        name: nickname, // nickname을 name으로 매핑
         email: getValues("email"),
         password: getValues("password"),
-        bio: "",                       // 선택값: 필요 시 다른 입력 필드로 받아도 됨
-        avatar: "",                    // 선택값: 추후 URL을 받을 수 있음
+        bio: "", // 선택값: 필요 시 다른 입력 필드로 받아도 됨
+        avatar: "", // 선택값: 추후 URL을 받을 수 있음
       });
       const { accessToken, refreshToken } = res.data.data;
       setAccessToken(accessToken);
       setRefreshToken(refreshToken);
       alert("회원가입 완료!");
+      navigate("/login");
     } catch (err: any) {
       alert("회원가입 실패: " + (err.response?.data?.message || err.message));
     }
@@ -157,7 +159,8 @@ const SignupPage = () => {
             <button
               type="button"
               onClick={() => {
-                window.location.href = "http://localhost:8000/v1/auth/google/login";
+                window.location.href =
+                  "http://localhost:8000/v1/auth/google/login";
               }}
               className="w-full border border-white py-3 rounded-sm flex justify-center items-center gap-2"
             >
@@ -182,7 +185,9 @@ const SignupPage = () => {
               }`}
             />
             {!!errors.email && !!touchedFields.email && (
-              <span className="text-red-500 text-sm">{errors.email.message}</span>
+              <span className="text-red-500 text-sm">
+                {errors.email.message}
+              </span>
             )}
 
             <button
@@ -226,7 +231,9 @@ const SignupPage = () => {
               </button>
             </div>
             {!!errors.password && !!touchedFields.password && (
-              <span className="text-red-500 text-sm">{errors.password.message}</span>
+              <span className="text-red-500 text-sm">
+                {errors.password.message}
+              </span>
             )}
 
             <div className="relative w-full">

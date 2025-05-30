@@ -2,11 +2,19 @@ import { useState, useRef, useEffect } from "react";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { useAuthContext } from "../context/AuthContext";
-import api from "../api/axios"; 
+import api from "../api/axios";
 import LPCard from "../components/LPCard";
+import LPModal from "../components/LPModal";
+import FAB from "../components/FAB";
 
 // LP 리스트 요청 함수
-const fetchLps = async ({ pageParam = 0, order }: { pageParam?: number; order: "asc" | "desc" }) => {
+const fetchLps = async ({
+  pageParam = 0,
+  order,
+}: {
+  pageParam?: number;
+  order: "asc" | "desc";
+}) => {
   const res = await api.get("lps", {
     params: {
       order,
@@ -29,23 +37,25 @@ const HomePage = () => {
   const { isLoggedIn } = useAuthContext();
   const navigate = useNavigate();
   const loadMoreRef = useRef(null);
+  const [showModal, setShowModal] = useState(false);
 
-  const {
-    data,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
-    isLoading,
-  } = useInfiniteQuery({
-    queryKey: ["lps", order],
-    queryFn: ({ pageParam = 0 }) => fetchLps({ pageParam, order }),
-    getNextPageParam: (lastPage) => lastPage.nextCursor,
-    initialPageParam: 0,
-  });
+  const handleFABClick = () => {
+    setShowModal(true);
+  };
+
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
+    useInfiniteQuery({
+      queryKey: ["lps", order],
+      queryFn: ({ pageParam = 0 }) => fetchLps({ pageParam, order }),
+      getNextPageParam: (lastPage) => lastPage.nextCursor,
+      initialPageParam: 0,
+    });
 
   const handleCardClick = (id: number) => {
     if (!isLoggedIn) {
-      const shouldLogin = window.confirm("로그인이 필요한 서비스입니다. 로그인 해주세요!");
+      const shouldLogin = window.confirm(
+        "로그인이 필요한 서비스입니다. 로그인 해주세요!"
+      );
       if (shouldLogin) navigate("/login");
       return;
     }
@@ -83,7 +93,9 @@ const HomePage = () => {
           </button>
           <button
             className={`px-3 py-1 rounded ${
-              order === "desc" ? "bg-white text-black" : "bg-gray-800 text-white"
+              order === "desc"
+                ? "bg-white text-black"
+                : "bg-gray-800 text-white"
             }`}
             onClick={() => setOrder("desc")}
           >
@@ -101,23 +113,26 @@ const HomePage = () => {
                 </div>
               ))
             : data?.pages.flatMap((page) =>
-              page.items.map((lp: {
-                id: number;
-                thumbnail: string;
-                title: string;
-                createdAt: string;
-                likeCount?: number;
-              }) => (
-                <LPCard
-                  key={lp.id}
-                  id={lp.id}
-                  thumbnail={lp.thumbnail}
-                  title={lp.title}
-                  createdAt={lp.createdAt}
-                  likeCount={lp.likeCount ?? 0}
-                  onClick={() => handleCardClick(lp.id)}
-                />
-              ))
+                page.items.map(
+                  (lp: {
+                    id: number;
+                    thumbnail: string;
+                    title: string;
+                    createdAt: string;
+                    likeCount?: number;
+                    likes?: any[];
+                  }) => (
+                    <LPCard
+                      key={lp.id}
+                      id={lp.id}
+                      thumbnail={lp.thumbnail}
+                      title={lp.title}
+                      createdAt={lp.createdAt}
+                      likeCount={lp.likes?.length ?? 0}
+                      onClick={() => handleCardClick(lp.id)}
+                    />
+                  )
+                )
               )}
         </div>
 
@@ -135,6 +150,8 @@ const HomePage = () => {
 
         <div ref={loadMoreRef} className="h-10" />
       </div>
+      <FAB onClick={handleFABClick} />
+      {showModal && <LPModal onClose={() => setShowModal(false)} />}
     </div>
   );
 };

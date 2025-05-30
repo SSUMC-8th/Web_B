@@ -8,11 +8,11 @@ import SignupPage from "./pages/SignupPage";
 import Mypage from "./pages/MyPage.tsx";
 import GoogleCallback from "./pages/GoogleCallback";
 import LPDetail from "./pages/LPDetail.tsx";
+import SearchResult from "./pages/SearchResult";
 
 import ProtectedRoute from "../src/components/ProtectedRoute";
-import { AuthProvider } from "./context/AuthContext"; 
+import { AuthProvider } from "./context/AuthContext";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-
 
 const queryClient = new QueryClient();
 
@@ -25,6 +25,7 @@ const router = createBrowserRouter([
       { index: true, element: <HomePage /> },
       { path: "login", element: <LoginPage /> },
       { path: "signup", element: <SignupPage /> },
+      { path: "search", element: <SearchResult /> },
       {
         path: "mypage",
         element: (
@@ -58,6 +59,5 @@ function App() {
     </QueryClientProvider>
   );
 }
-
 
 export default App;
